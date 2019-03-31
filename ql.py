@@ -74,6 +74,7 @@ def random_play():
             return new_q
 
         legal_moves = ttt.legal_moves(game.board)
+        # epsilon greedy exploration
         if (random.uniform(0, 1) > epsilon):
             move = np.argmax(new_q(q[str(game.board)], legal_moves))
         else:
@@ -105,9 +106,6 @@ def random_play():
         q[str(s)] = q_value
 
     for game in games:
-        first = random.randint(1,2)
-        p_order = [first, 3-first]
-
         while (ttt.check_for_win(game.board) == 0):
             p1_turn(game)
     
@@ -118,7 +116,7 @@ def random_play():
     fo = open("firstplayer.json", "w")
     json.dump(q, fo)
     fo.close()
-
+    #len(q) ~ 3217 states
     print("Player 1 Wins: ", np.asarray(np.where(rewards == 100)).flatten().size/len(rewards)) # ~0.84, 0.66
     print("Player 2 Wins: ", np.asarray(np.where(rewards == -100)).flatten().size/len(rewards)) # ~0.089, 0.23
     print("Ties: ", np.asarray(np.where(rewards == 50)).flatten().size/len(rewards)) # ~0.066, 0.1
@@ -147,14 +145,11 @@ def q_play(q):
         game.update_board(player, move)
 
     for game in games:
-        first = random.randint(1,2)
-        p_order = [1, 2]
-
         while (ttt.check_for_win(game.board) == 0):
-            p_turn(p_order[0], game)
+            p_turn(1, game)
             if (ttt.check_for_win(game.board) != 0 or len(ttt.legal_moves(game.board)) == 0):
                 break
-            p_turn(p_order[1], game)
+            p_turn(2, game)
     
         rewards = np.append(rewards, ttt.check_for_win(game.board))
 
@@ -163,11 +158,10 @@ def q_play(q):
     print("Player 2 Wins: ", np.asarray(np.where(rewards == -100)).flatten().size/len(rewards)) # ~0.0
     print("Ties: ", np.asarray(np.where(rewards == 50)).flatten().size/len(rewards)) # ~0.022, 0.0116
 
-# q_play(random_play())
-# random_play()
+q_play(random_play())
 
 def human_play():
-    with open('firstplayer.json') as f:
+    with open('aifirst.json') as f:
         q = json.load(f)
     game = ttt()
 
@@ -183,7 +177,6 @@ def human_play():
 
         legal_moves = ttt.legal_moves(game.board)
         old_board = game.board.copy() 
-        print(q[str(game.board)])       
         move = np.argmax(new_q(q[str(game.board)], legal_moves))
         game.update_board(1, move)
 
@@ -199,11 +192,12 @@ def human_play():
             break
         h_turn(game)
 
+    print()
     if (ttt.check_for_win(game.board) == 100):
-        print('my baby won')
+        print('AI wins')
     elif (ttt.check_for_win(game.board) == -100):
-        print('i beat it')
+        print('You somehow beat the AI')
     else:
-        print('tie')
+        print('You both played a perfect game. Tie')
 
-human_play()
+# human_play()
