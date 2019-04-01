@@ -40,16 +40,25 @@ During random play, the agent will occasionally end up in states that given rewa
 
 `Q(s)[a] := ((1 - α) * Q(s)[a]) + α * (r + (γ * max a′Q(s′)[a′]))`
 
-Where Q(s) is the old state, Q(s') is the new state, alpha is the learning rate, and gamma is the discount factor. The `max a'Q(s')[a']` section says select highest expected reward from S' over all possible actions A.
+Where Q(s) is the old state, Q(s') is the new state, alpha is the learning rate, and gamma is the discount factor. The `max a'Q(s')[a']` section means select highest expected reward from S' over all possible actions A.
 
 The next state definition was something that took a little bit to figure out. While the agent was able to choose winning moves, it wasn't able to figure out how to block states that lead to wins by the opponent. What eventually worked was making the next state S' be the game board after player 2 moved randomly. This way, the agent was able to figure out which states and actions lead to defeat (and how to make actions to avoid these states).
 
-## Exploration vs. Exploitation
+### Exploration vs. Exploitation
 While learning during random play, the agent has the ability to either play randomly or use the learned Q-table to choose intelligent moves that maximize the expected reward. Playing randomly allows the agent to explore and discover new game states, while exploiting allows the agent to use know winning sequences. 
 
 This is done by using a parameter called epsilon. As training goes on, the value of epsilon is slowly decreased, and the agent begins choosing more intelligent moves and less random moves.
 
-`[0, -42.05936354914919, 0, 99.99999998941072, 0, 62.09929903388406, 0, 0, 0]` is an example of a value in the Q-table given a state. It represents the nine spaces of the game board. By playing a number of games that included this state, it learned that playing in the 4th position always gives a win, while playing in the 2nd space usually resulted in a loss. During actual play, the agent chooses the action with the highest value, in this case, space four.
+```
+ X |   | O
+-----------
+   | X |
+-----------
+ X | O | O
+[0, -42.05936354914919, 0, 99.99999998941072, 0, 62.09929903388406, 0, 0, 0]
+```
+
+This an example of a value in the Q-table given a state. It represents the nine spaces of the game board. By playing a number of games that included this state, it learned that playing in the 4th position always gives a win, while playing in the 2nd space usually resulted in a loss. During actual play, the agent chooses the action with the highest expected reward value.
 
 
 ## Q-Learning Results
