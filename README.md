@@ -60,9 +60,21 @@ This is done by using a parameter called epsilon. As training goes on, the value
 
 This an example of a value in the Q-table given a state. It represents the nine spaces of the game board. By playing a number of games that included this state, it learned that playing in the 4th position always gives a win, while playing in the 2nd space usually resulted in a loss. During actual play, the agent chooses the action with the highest expected reward value.
 
-
 ## Q-Learning Results
 The AI first agent was able to reach perfect play (no losses) after ~150,000 training games.
 Alternatively, the random first agent took ~300,000 games to reach perfect play. This is due to the fact that the state space is twice as large as the AI first state space. 
 
 While other methods are faster and more efficient than Q-learning, this still shows that agents can obtain a high (perfect) level of play without any human/strategic input.
+
+
+## Deep Q Learning
+The Q-table method works well for games that have a small number of unique game states. So it works well for Tic Tac Toe. However, for more complicated games like Chess and Go, the size of their Q-tables would be unbelievably large. In these situations, the Q values can be approximated by using neural networks.
+
+### Neural Network Architecture
+Given the 2D nature of Tic Tac Toe, it makes sense to include some convolutional layers in the neural network (this technique has also shown successful in DeepMind's implementation of AlphaZero). After the convolutional layers and flattening come a few fully connected layers that lead to an output layer with 9 values, each corresponding with a Q value and a move on the board.
+
+### Updating Network
+Updating the network is slightly different than updating the Q-table, as you can't directly edit the weights of the network. The equation `Q(s)[a] := r + (γ * max a′Q(s′)[a′])` is used to generate the 'correct' Q values that the network should be trying to predict. Using this Q value and the corresponding board state, training the network minimizes the loss between the predicted Q values and the given ones. 
+
+## Deep Q-Learning Results
+Training this Deep Q network takes much longer than the tabular method. After ~200,000 games, the AI only loses 0.001% of the time. While not perfect, tuning hyperparameters and training longer will most likely result in a perfectly playing. This neural network approximation technique is much more transferrable to other games.
